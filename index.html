@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<meta name="description" content="KonForm izrađuje kuhinje, kupatila, dnevni boravak, spavaće sobe, plakare i stolove po meri. Oblik napravljen da traje.">
+<meta name="description" content="KonForm izrađuje kuhinje, kupatila, dnevni boravak, spavaće sobe i plakare po meri. Oblik napravljen da traje.">
 <title>KonForm, nameštaj po meri</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -46,31 +46,62 @@
   :focus-visible{ outline:2px solid var(--brass); outline-offset:3px; }
   summary::-webkit-details-marker{ display:none; }
   @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+  html, body{ max-width:100%; overflow-x:hidden; }
+  @media (max-width: 860px){
+    [data-desktop-nav], [data-desktop-tel]{ display:none !important; }
+    [data-burger]{ display:flex !important; }
+  }
 </style>
 </helmet>
 
 <nav data-nav="1" style="position:fixed; top:0; left:0; right:0; z-index:50; background:transparent; border-bottom:1px solid transparent; transition:background .35s ease, border-color .35s ease;">
-  <div data-nav-inner="1" style="max-width:1180px; margin:0 auto; padding:24px clamp(22px,3vw,32px); display:flex; align-items:center; justify-content:space-between; gap:24px; transition:padding .35s ease;">
+  <div data-nav-inner="1" style="max-width:1180px; margin:0 auto; padding:24px clamp(16px,3vw,32px); display:flex; align-items:center; justify-content:space-between; gap:24px; transition:padding .35s ease;">
     <a href="#top" style="flex:1 1 0; display:flex; align-items:center; gap:10px; font-size:20px; font-weight:600; letter-spacing:0.01em; text-decoration:none; color:#fff; transition:color .35s ease;">
       <img data-logo="1" src="logo.png" alt="KonForm" style="height:24px; width:auto; filter:invert(1); transition:filter .35s ease; position:relative; top:-3px;">
       <span>KonForm</span>
     </a>
-    <ul style="flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:clamp(16px,2.4vw,30px); list-style:none; margin:0; padding:0; flex-wrap:wrap;">
+    <ul data-desktop-nav="1" style="flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:clamp(16px,2.4vw,30px); list-style:none; margin:0; padding:0; flex-wrap:wrap;">
       <li><a href="#o-nama" style="font-size:15px; text-decoration:none; color:#fff; transition:color .35s ease;">O nama</a></li>
       <li><a href="#proces" style="font-size:15px; text-decoration:none; color:#fff; transition:color .35s ease;">Proces</a></li>
       <li><a href="#projekti" style="font-size:15px; text-decoration:none; color:#fff; transition:color .35s ease;">Projekti</a></li>
       <li><a href="#zasto" style="font-size:15px; text-decoration:none; color:#fff; transition:color .35s ease;">Zašto mi</a></li>
       <li><a href="#kontakt" style="font-size:15px; text-decoration:none; color:#fff; transition:color .35s ease;">Kontakt</a></li>
     </ul>
-    <a href="tel:+38163232688" style="flex:1 1 0; text-align:right; font-size:14px; text-decoration:none; color:#fff; text-decoration-line:underline; text-underline-offset:4px; text-decoration-thickness:1px; padding-bottom:2px; white-space:nowrap; transition:color .35s ease, border-color .35s ease;"><br></a>
+    <a data-desktop-tel="1" href="tel:+38163232688" style="flex:1 1 0; text-align:right; font-size:14px; text-decoration:none; color:#fff; text-decoration-line:underline; text-underline-offset:4px; text-decoration-thickness:1px; padding-bottom:2px; white-space:nowrap; transition:color .35s ease, border-color .35s ease;"><br></a>
+    <button type="button" data-burger="1" aria-label="Otvori meni" aria-expanded="false" onClick="{{ toggleMenu }}" style="display:none; flex:none; width:44px; height:44px; align-items:center; justify-content:center; background:transparent; border:0; padding:0; cursor:pointer;">
+      <span data-burger-lines="1" style="display:block; width:24px; height:12px; position:relative;">
+        <span style="position:absolute; left:0; top:0; width:100%; height:1.5px; background:currentColor; display:block;"></span>
+        <span style="position:absolute; left:0; bottom:0; width:100%; height:1.5px; background:currentColor; display:block;"></span>
+      </span>
+    </button>
   </div>
 </nav>
 
-<div id="top"></div>
+<sc-if value="{{ menuOpen }}">
+  <div style="position:fixed; inset:0; z-index:60; background:var(--bone); display:flex; flex-direction:column; padding:24px clamp(22px,6vw,32px) 40px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:20px; flex:none;">
+      <span style="display:flex; align-items:center; gap:10px; font-size:20px; font-weight:600; color:var(--charcoal);">
+        <img src="logo.png" alt="KonForm" style="height:24px; width:auto; position:relative; top:-3px;">
+        <span>KonForm</span>
+      </span>
+      <button type="button" aria-label="Zatvori meni" onClick="{{ closeMenu }}" style="flex:none; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:transparent; border:0; color:var(--charcoal); font-size:28px; line-height:1; cursor:pointer;">×</button>
+    </div>
+    <nav style="margin-top:48px; display:flex; flex-direction:column;">
+      <a href="#o-nama" onClick="{{ closeMenu }}" style="font-size:26px; font-weight:300; color:var(--walnut); text-decoration:none; padding:18px 0; border-bottom:1px solid var(--stone-line);">O nama</a>
+      <a href="#proces" onClick="{{ closeMenu }}" style="font-size:26px; font-weight:300; color:var(--walnut); text-decoration:none; padding:18px 0; border-bottom:1px solid var(--stone-line);">Proces</a>
+      <a href="#zasto" onClick="{{ closeMenu }}" style="font-size:26px; font-weight:300; color:var(--walnut); text-decoration:none; padding:18px 0; border-bottom:1px solid var(--stone-line);">Zašto mi</a>
+      <a href="#projekti" onClick="{{ closeMenu }}" style="font-size:26px; font-weight:300; color:var(--walnut); text-decoration:none; padding:18px 0; border-bottom:1px solid var(--stone-line);">Projekti</a>
+      <a href="#kontakt" onClick="{{ closeMenu }}" style="font-size:26px; font-weight:300; color:var(--walnut); text-decoration:none; padding:18px 0; border-bottom:1px solid var(--stone-line);">Kontakt</a>
+    </nav>
+    <a href="tel:+38163232688" style="margin-top:auto; font-size:15px; color:var(--walnut-soft); text-decoration:none;">+381 63 232 688</a>
+  </div>
+</sc-if>
+
+<div id="top" style="position:absolute; top:0; left:0; width:1px; height:1px;"></div>
 
 <section data-hero="1" data-screen-label="Hero" style="position:relative; height:100vh; min-height:560px; overflow:hidden; background:var(--charcoal);">
   <div style="position:absolute; inset:0;">
-    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3JCVxrKnOGXU5sbxpHVhIog8Pn5/hf_20260911_231058_60cebad0-0048-4ae3-bb95-8f305f385d83.png" alt="KonForm, dnevni boravak po meri" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+    <img src="./assets/hf_20260911_231058_60cebad0-0048-4ae3-bb95-8f305f385d83.png" alt="KonForm, dnevni boravak po meri" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
     <video data-hero-video="a" muted="" playsinline="" preload="auto" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1.1s ease;"></video>
     <video data-hero-video="b" muted="" playsinline="" preload="auto" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1.1s ease;"></video>
   </div>
@@ -81,8 +112,8 @@
   </div>
 </section>
 
-<section data-screen-label="Intro" style="padding:clamp(76px,9vw,120px) 0;">
-  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(22px,3vw,32px); display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:clamp(28px,5vw,64px); align-items:end;">
+<section data-screen-label="Intro" style="padding:clamp(56px,9vw,120px) 0;">
+  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(16px,3vw,32px); display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:clamp(28px,5vw,64px); align-items:end;">
     <div data-reveal="1">
       <h2 style="font-size:clamp(28px,3.4vw,44px); max-width:15ch;">Nameštaj koji traje.</h2>
       <p style="margin-top:22px; font-size:19px; max-width:56ch; opacity:0.86;">Od prve ideje do poslednjeg detalja, nameštaj projektujemo i izrađujemo prema vašim merama, navikama i željama.</p>
@@ -97,7 +128,7 @@
   <img src="o-nama.png" alt="Enterijer po meri, KonForm" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
   <div style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, rgba(20,15,10,0.78) 0%, rgba(20,15,10,0.58) 38%, rgba(20,15,10,0.12) 68%, rgba(20,15,10,0) 100%);"></div>
   <div style="position:relative; width:100%; display:flex; align-items:center;">
-    <div style="width:100%; max-width:1180px; margin:0 auto; padding:clamp(48px,7vw,72px) clamp(22px,3vw,32px);">
+    <div style="width:100%; max-width:1180px; margin:0 auto; padding:clamp(40px,7vw,72px) clamp(16px,3vw,32px);">
       <div data-reveal="1" style="max-width:min(560px, 100%); display:flex; flex-direction:column;">
         <div style="display:flex; align-items:center; gap:18px; margin-bottom:clamp(22px,3vw,34px);">
           <span style="flex:none; white-space:nowrap; font-size:12.5px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.82);">O nama</span>
@@ -115,29 +146,29 @@
   </div>
 </section>
 
-<section id="proces" data-screen-label="Proces" style="background:var(--cream); color:var(--charcoal); padding:clamp(76px,9vw,120px) 0 clamp(26px,3vw,40px);">
-  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(22px,3vw,32px);">
+<section id="proces" data-screen-label="Proces" style="background:var(--cream); color:var(--charcoal); padding:clamp(56px,9vw,120px) 0 clamp(26px,3vw,40px);">
+  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(16px,3vw,32px);">
     <div data-reveal="1">
       <h2 style="font-size:clamp(28px,3.4vw,44px); max-width:15ch; color:var(--walnut);">Kako izgleda saradnja</h2>
       <p style="margin-top:18px; font-size:19px; max-width:56ch; color:var(--charcoal); opacity:0.82;">Četiri koraka, od prve posete do uključenog nameštaja.</p>
     </div>
-    <div data-reveal="1" style="margin-top:64px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:1px; background:var(--stone-line); justify-items:center;">
-      <div style="background:var(--cream); width:100%; height:100%; padding:34px clamp(22px,3vw,32px) 40px; display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
+    <div data-reveal="1" style="margin-top:clamp(34px,5vw,64px); display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:1px; background:var(--stone-line); justify-items:center;">
+      <div style="background:var(--cream); width:100%; height:100%; padding:clamp(22px,3vw,34px) clamp(12px,3vw,32px) clamp(26px,3.5vw,40px); display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
         <span style="display:block; font-size:14px; font-weight:500; letter-spacing:0.01em; color:var(--brass); margin-bottom:22px;">Prvi korak</span>
         <h3 style="color:var(--walnut); font-size:22px; margin-bottom:12px;">Konsultacija</h3>
         <p style="font-size:15px; color:var(--charcoal); opacity:0.78; max-width:30ch;">Dolazimo kod vas, merimo prostor i slušamo šta vam zaista treba.</p>
       </div>
-      <div style="background:var(--cream); width:100%; height:100%; padding:34px clamp(22px,3vw,32px) 40px; display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
+      <div style="background:var(--cream); width:100%; height:100%; padding:clamp(22px,3vw,34px) clamp(12px,3vw,32px) clamp(26px,3.5vw,40px); display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
         <span style="display:block; font-size:14px; font-weight:500; letter-spacing:0.01em; color:var(--brass); margin-bottom:22px;">Drugi korak</span>
         <h3 style="color:var(--walnut); font-size:22px; margin-bottom:12px;">Dizajn</h3>
         <p style="font-size:15px; color:var(--charcoal); opacity:0.78; max-width:30ch;">Pravimo predlog i biramo materijale, boje i detalje zajedno sa vama.</p>
       </div>
-      <div style="background:var(--cream); width:100%; height:100%; padding:34px clamp(22px,3vw,32px) 40px; display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
+      <div style="background:var(--cream); width:100%; height:100%; padding:clamp(22px,3vw,34px) clamp(12px,3vw,32px) clamp(26px,3.5vw,40px); display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
         <span style="display:block; font-size:14px; font-weight:500; letter-spacing:0.01em; color:var(--brass); margin-bottom:22px;">Treći korak</span>
         <h3 style="color:var(--walnut); font-size:22px; margin-bottom:12px;">Izrada</h3>
         <p style="font-size:15px; color:var(--charcoal); opacity:0.78; max-width:30ch;">Vaš nameštaj nastaje u našoj radionici, komad po komad, po dogovorenim merama.</p>
       </div>
-      <div style="background:var(--cream); width:100%; height:100%; padding:34px clamp(22px,3vw,32px) 40px; display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
+      <div style="background:var(--cream); width:100%; height:100%; padding:clamp(22px,3vw,34px) clamp(12px,3vw,32px) clamp(26px,3.5vw,40px); display:grid; grid-template-rows:auto auto 1fr; text-align:center; justify-items:center;">
         <span style="display:block; font-size:14px; font-weight:500; letter-spacing:0.01em; color:var(--brass); margin-bottom:22px;">Četvrti korak</span>
         <h3 style="color:var(--walnut); font-size:22px; margin-bottom:12px;">Ugradnja</h3>
         <p style="font-size:15px; color:var(--charcoal); opacity:0.78; max-width:30ch;">Montiramo sve na licu mesta, spremno za svakodnevnu upotrebu.</p>
@@ -146,8 +177,8 @@
   </div>
 </section>
 
-<section id="projekti" data-screen-label="Projekti" style="background:var(--cream); padding:clamp(26px,3vw,40px) 0 clamp(76px,9vw,120px);">
-  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(22px,3vw,32px);">
+<section id="projekti" data-screen-label="Projekti" style="background:var(--cream); padding:clamp(26px,3vw,40px) 0 clamp(56px,9vw,120px);">
+  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(16px,3vw,32px);">
     <div data-reveal="1" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:clamp(20px,4vw,56px); align-items:end;">
       <div>
         <p style="font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:var(--walnut-soft); margin-bottom:18px;">Projekti</p>
@@ -183,26 +214,26 @@
   </div>
 </section>
 
-<section id="zasto" data-screen-label="Zašto mi" style="padding:clamp(76px,9vw,120px) 0;">
-  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(22px,3vw,32px); display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:clamp(36px,5vw,72px); align-items:start;">
+<section id="zasto" data-screen-label="Zašto mi" style="padding:clamp(56px,9vw,120px) 0;">
+  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(16px,3vw,32px); display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:clamp(26px,5vw,72px); align-items:start;">
     <div data-reveal="1">
       <h2 style="font-size:clamp(28px,3.4vw,44px); max-width:15ch;">Zašto mi</h2>
       <p style="margin-top:18px; font-size:19px; max-width:56ch; opacity:0.86;">Jer dobar nameštaj nije samo stvar izgleda. Važno je kako je napravljen, kako se uklapa u prostor i koliko dugo traje.</p>
     </div>
-    <div data-reveal="1" style="display:flex; flex-direction:column; gap:30px; margin-top:36px;">
-      <div style="border-top:1px solid var(--stone-line); padding-top:22px;">
+    <div data-reveal="1" style="display:flex; flex-direction:column; gap:clamp(20px,2.6vw,30px); margin-top:clamp(8px,3vw,36px);">
+      <div style="border-top:1px solid var(--stone-line); padding-top:clamp(16px,2.2vw,22px);">
         <h3 style="font-size:19px; margin-bottom:8px;">Napravljeno da traje</h3>
         <p style="font-size:15.5px; opacity:0.82; max-width:52ch;">Biramo kvalitetne materijale i okove koji su namenjeni svakodnevnoj upotrebi.</p>
       </div>
-      <div style="border-top:1px solid var(--stone-line); padding-top:22px;">
+      <div style="border-top:1px solid var(--stone-line); padding-top:clamp(16px,2.2vw,22px);">
         <h3 style="font-size:19px; margin-bottom:8px;">Pravljeno za vaš prostor</h3>
         <p style="font-size:15.5px; opacity:0.82; max-width:52ch;">Svaki element prilagođavamo dimenzijama, potrebama i načinu korišćenja prostora.</p>
       </div>
-      <div style="border-top:1px solid var(--stone-line); padding-top:22px;">
+      <div style="border-top:1px solid var(--stone-line); padding-top:clamp(16px,2.2vw,22px);">
         <h3 style="font-size:19px; margin-bottom:8px;">Vi birate detalje</h3>
         <p style="font-size:15.5px; opacity:0.82; max-width:52ch;">Materijale, boje, dekore i završne obrade birate zajedno sa nama.</p>
       </div>
-      <div style="border-top:1px solid var(--stone-line); padding-top:22px;">
+      <div style="border-top:1px solid var(--stone-line); padding-top:clamp(16px,2.2vw,22px);">
         <h3 style="font-size:19px; margin-bottom:8px;">Od ideje do montaže</h3>
         <p style="font-size:15.5px; opacity:0.82; max-width:52ch;">Projektujemo, izrađujemo i ugrađujemo. Sve na jednom mestu.</p>
       </div>
@@ -241,8 +272,8 @@
 </sc-if>
 
 
-<section data-screen-label="Pitanja" style="padding:clamp(76px,9vw,120px) 0;">
-  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(22px,3vw,32px);">
+<section data-screen-label="Pitanja" style="padding:clamp(56px,9vw,120px) 0;">
+  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(16px,3vw,32px);">
     <div data-reveal="1">
       <h2 style="font-size:clamp(28px,3.4vw,44px); max-width:15ch;">Pitanja koja često čujemo</h2>
     </div>
@@ -267,8 +298,8 @@
   </div>
 </section>
 
-<section id="kontakt" data-screen-label="Kontakt" style="background:var(--walnut); color:var(--bone); text-align:center; padding:clamp(76px,9vw,120px) 0;">
-  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(22px,3vw,32px);">
+<section id="kontakt" data-screen-label="Kontakt" style="background:var(--walnut); color:var(--bone); text-align:center; padding:clamp(56px,9vw,120px) 0;">
+  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(16px,3vw,32px);">
     <h2 style="color:var(--bone); font-size:clamp(28px,3.4vw,44px); max-width:16ch; margin:0 auto;">VAŠ PROSTOR.<br>VAŠE MERE.<br>VAŠ KONFORM.</h2>
     <p style="font-size:19px; color:var(--bone); opacity:0.78; margin:22px auto 0; max-width:56ch;">Zakažite konsultaciju</p>
     <div style="margin-top:44px; display:flex; gap:18px; justify-content:center; flex-wrap:wrap;">
@@ -279,7 +310,7 @@
 </section>
 
 <footer style="background:var(--charcoal); color:var(--stone); padding:56px 0 36px;">
-  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(22px,3vw,32px);">
+  <div style="max-width:1180px; margin:0 auto; padding:0 clamp(16px,3vw,32px);">
     <div style="display:flex; align-items:center; justify-content:space-between; gap:20px 32px; flex-wrap:wrap; padding-bottom:32px; border-bottom:1px solid rgba(201,194,184,0.18);">
       <span style="display:flex; align-items:center; gap:12px; font-weight:600; color:var(--bone); font-size:22px; line-height:1;">
         <img src="logo.png" alt="KonForm" style="height:26px; width:auto; filter:invert(1);">
@@ -299,7 +330,7 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#AD8A54&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#AD8A54&quot;,&quot;#8A6A3E&quot;,&quot;#7A6E5D&quot;,&quot;#9B5C3C&quot;],&quot;section&quot;:&quot;Izgled&quot;},&quot;showHeroVideo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;heroVideoSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.6,&quot;min&quot;:0.2,&quot;max&quot;:1.5,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;revealOnScroll&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Izgled&quot;}}">
-var IMG = "https://d8j0ntlcm91z4.cloudfront.net/user_3JCVxrKnOGXU5sbxpHVhIog8Pn5/";
+var IMG = "./assets/";
 
 /* Dodavanje novog projekta ili fotografije: samo dopunite ovu listu. */
 var PROJECTS = [
@@ -326,13 +357,10 @@ var PROJECTS = [
     images: [IMG + "hf_20260911_234025_abab5479-edff-44dd-a183-25e602e580b3.png"] },
   { category: "Plakari", title: "Plakar po meri",
     desc: "Garderoberi i plakari sa unutrašnjom organizacijom kakva vama odgovara.",
-    images: [IMG + "hf_20260911_234025_aa4c27b0-f2b6-41d4-88ca-188234ff0cd9.png"] },
-  { category: "Stolovi", title: "Sto po meri",
-    desc: "Trpezarijski i radni stolovi u kombinaciji drveta i kamena, po dogovoru.",
-    images: [IMG + "hf_20260911_234025_d1f7f73e-c699-4209-9204-33014ddf2a83.png"] }
+    images: [IMG + "hf_20260911_234025_aa4c27b0-f2b6-41d4-88ca-188234ff0cd9.png"] }
 ];
 
-var FILTERS = ["Sve", "Kuhinje", "Kupatila", "Dnevni boravak", "Spavaće sobe", "Plakari", "Stolovi"];
+var FILTERS = ["Sve", "Kuhinje", "Kupatila", "Dnevni boravak", "Spavaće sobe", "Plakari"];
 var SPANS = [
   { col: 3, ratio: "4/3" },
   { col: 3, ratio: "4/3" },
@@ -480,7 +508,7 @@ class Component extends DCLogic {
     this.stopHero();
     if (this.io) this.io.disconnect();
     if (this.navObs) this.navObs.disconnect();
-    if (this.onScroll) window.removeEventListener('scroll', this.onScroll);
+    if (this.onScroll) { window.removeEventListener('scroll', this.onScroll); document.removeEventListener('scroll', this.onScroll, true); }
     if (this.onKeyDown) document.removeEventListener('keydown', this.onKeyDown);
     document.body.style.overflow = '';
   }
@@ -536,14 +564,28 @@ class Component extends DCLogic {
       var call = links[links.length - 1];
       nav.style.background = solid ? 'var(--bone)' : 'transparent';
       nav.style.borderBottomColor = solid ? 'var(--stone-line)' : 'transparent';
-      if (inner) inner.style.padding = solid ? '13px clamp(22px,3vw,32px)' : '24px clamp(22px,3vw,32px)';
+      if (inner) inner.style.padding = solid ? '13px clamp(16px,3vw,32px)' : '24px clamp(16px,3vw,32px)';
       links.forEach(function(a){ a.style.color = solid ? '#000' : '#fff'; });
       if (call) call.style.borderBottomColor = solid ? '#000' : 'rgba(255,255,255,0.55)';
       if (logo) logo.style.filter = solid ? 'brightness(0)' : 'invert(1)';
+      var burger = nav.querySelector('[data-burger]');
+      if (burger) burger.style.color = solid ? '#000' : '#fff';
     };
-    this.onScroll = function(){ set(window.scrollY > 8); };
+    var sentinel = document.getElementById('top');
+    this.onScroll = function(){
+      var y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      if (!y && sentinel) y = -sentinel.getBoundingClientRect().top;
+      set(y > 8);
+    };
     this.onScroll();
     window.addEventListener('scroll', this.onScroll, { passive: true });
+    document.addEventListener('scroll', this.onScroll, { passive: true, capture: true });
+    if (sentinel && 'IntersectionObserver' in window) {
+      this.navObs = new IntersectionObserver(function(en){
+        en.forEach(function(e){ set(!e.isIntersecting); });
+      }, { threshold: 0 });
+      this.navObs.observe(sentinel);
+    }
   }
 
   stopHero() {
@@ -554,20 +596,23 @@ class Component extends DCLogic {
 
   initHero() {
     if (this.props.showHeroVideo === false || this.reduce || this.heroStarted) return;
+    if (location.search.indexOf('still=1') !== -1) return;
     var clips = [
-      "https://d8j0ntlcm91z4.cloudfront.net/user_3JCVxrKnOGXU5sbxpHVhIog8Pn5/hf_20260911_232405_c0825c60-3fab-4055-b67d-fbcb6d2edcce.mp4",
-      "https://d8j0ntlcm91z4.cloudfront.net/user_3JCVxrKnOGXU5sbxpHVhIog8Pn5/hf_20260912_012344_d0557786-8b51-4368-af97-f4d798b10201.mp4",
-      "https://d8j0ntlcm91z4.cloudfront.net/user_3JCVxrKnOGXU5sbxpHVhIog8Pn5/hf_20260912_012344_e193677b-f6d7-4087-a1ce-0100b9c5b76a.mp4"
+      "./assets/hf_20260911_232405_c0825c60-3fab-4055-b67d-fbcb6d2edcce.mp4",
+      "./assets/hf_20260912_012344_d0557786-8b51-4368-af97-f4d798b10201.mp4",
+      "./assets/hf_20260912_012344_e193677b-f6d7-4087-a1ce-0100b9c5b76a.mp4"
     ];
     var vidA = document.querySelector('[data-hero-video="a"]');
     var vidB = document.querySelector('[data-hero-video="b"]');
     if (!vidA || !vidB) return;
     this.vids = [vidA, vidB];
+    [vidA, vidB].forEach(function(v){ v.muted = true; v.defaultMuted = true; v.volume = 0; });
     this.heroStarted = true;
     var speed = this.props.heroVideoSpeed || 0.6;
     var active = vidA, next = vidB, idx = 1 % clips.length, transitioning = false;
 
-    function play(el){ el.playbackRate = speed; var p = el.play(); if (p && p.catch) p.catch(function(){}); }
+    function silence(el){ el.muted = true; el.defaultMuted = true; el.volume = 0; el.setAttribute('muted',''); }
+    function play(el){ silence(el); el.playbackRate = speed; var p = el.play(); if (p && p.catch) p.catch(function(){}); }
     function onTime(){
       if (transitioning) return;
       if (active.duration && active.currentTime >= active.duration - 0.9) {
@@ -604,7 +649,21 @@ class Component extends DCLogic {
     document.addEventListener('click', kick, { once: true });
   }
 
-  renderVals() { return this.buildGallery(); }
+  renderVals() {
+    var self = this;
+    var vals = this.buildGallery();
+    vals.menuOpen = !!this.state.menuOpen;
+    vals.toggleMenu = function(){
+      var open = !self.state.menuOpen;
+      document.body.style.overflow = open ? 'hidden' : '';
+      self.setState({ menuOpen: open });
+    };
+    vals.closeMenu = function(){
+      document.body.style.overflow = '';
+      self.setState({ menuOpen: false });
+    };
+    return vals;
+  }
 }
 </script>
 </body>
