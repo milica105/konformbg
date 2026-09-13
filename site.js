@@ -37,10 +37,11 @@
     { col: 2, ratio: "3/4" }, { col: 2, ratio: "3/4" },
     { col: 2, ratio: "3/4" }, { col: 6, ratio: "21/9" }
   ];
+  /* Hero klipovi: 1440px, bez zvuka, ~1 MB po klipu. */
   var HERO_CLIPS = [
-    IMG + "hf_20260911_232405_c0825c60-3fab-4055-b67d-fbcb6d2edcce.mp4",
-    IMG + "hf_20260912_012344_d0557786-8b51-4368-af97-f4d798b10201.mp4",
-    IMG + "hf_20260912_012344_e193677b-f6d7-4087-a1ce-0100b9c5b76a.mp4"
+    IMG + "hero-1.mp4",
+    IMG + "hero-2.mp4",
+    IMG + "hero-3.mp4"
   ];
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -127,12 +128,39 @@
     var vidA = $('[data-hero-video="a"]');
     var vidB = $('[data-hero-video="b"]');
     if (!vidA || !vidB) return;
-    var speed = 0.6, active = vidA, next = vidB, idx = 1, transitioning = false;
+    var speed = 0.6, active = vidA, next = vidB, idx = 0, transitioning = false, lazyDone = false;
 
-    function silence(el) { el.muted = true; el.defaultMuted = true; el.volume = 0; el.setAttribute('muted', ''); }
-    function play(el) { silence(el); el.playbackRate = speed; var p = el.play(); if (p && p.catch) p.catch(function () {}); }
+    function silence(el) {
+      el.muted = true; el.defaultMuted = true; el.volume = 0;
+      el.setAttribute('muted', ''); el.setAttribute('playsinline', ''); el.setAttribute('webkit-playsinline', '');
+    }
+    function play(el) {
+      silence(el); el.playbackRate = speed;
+      var p = el.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    function revealer(el) {
+      return function () {
+        if (el !== active) return;
+        el.style.opacity = '1';
+        if (lazyDone) return;
+        lazyDone = true;
+        standby(HERO_CLIPS[(idx + 1) % HERO_CLIPS.length]);
+      };
+    }
+    function standby(src) {
+      var el = next;
+      el.removeAttribute('autoplay');
+      el.src = src;
+      el.playbackRate = speed;
+      el.load();
+      var hold = function () { if (el !== active) { try { el.pause(); el.currentTime = 0; } catch (e) {} } };
+      hold();
+      el.addEventListener('loadeddata', hold, { once: true });
+    }
     function onTime() {
       if (transitioning) return;
+      if (!active.paused && active.currentTime > 0.05) active.style.opacity = '1';
       if (active.duration && active.currentTime >= active.duration - 0.9) {
         transitioning = true;
         active.removeEventListener('timeupdate', onTime);
@@ -140,32 +168,45 @@
       }
     }
     function crossfade() {
-      next.currentTime = 0;
+      try { next.currentTime = 0; } catch (e) {}
       play(next);
       next.style.opacity = '1';
       active.style.opacity = '0';
       setTimeout(function () {
-        active.pause();
+        try { active.pause(); } catch (e) {}
         idx = (idx + 1) % HERO_CLIPS.length;
-        active.src = HERO_CLIPS[idx];
-        active.load();
-        active.playbackRate = speed;
-        var swap = active; active = next; next = swap;
+        var spare = active; active = next; next = spare;
+        standby(HERO_CLIPS[(idx + 1) % HERO_CLIPS.length]);
         transitioning = false;
         active.addEventListener('timeupdate', onTime);
       }, 1100);
     }
 
+    var holdIfStandby = function (e) {
+      var el = e.target;
+      if (transitioning || el === active) return;
+      try { el.pause(); el.currentTime = 0; } catch (err) {}
+    };
     silence(vidA); silence(vidB);
+    vidA.addEventListener('play', holdIfStandby);
+    vidB.addEventListener('play', holdIfStandby);
+    vidA.addEventListener('playing', revealer(vidA));
+    vidB.addEventListener('playing', revealer(vidB));
+    vidA.addEventListener('timeupdate', onTime);
     vidA.src = HERO_CLIPS[0];
-    vidB.src = HERO_CLIPS[1];
-    vidA.load(); vidB.load();
-    vidA.playbackRate = speed; vidB.playbackRate = speed;
-    vidA.addEventListener('loadeddata', function () { play(vidA); vidA.style.opacity = '1'; }, { once: true });
-    active.addEventListener('timeupdate', onTime);
-    var kick = function () { play(active); };
-    document.addEventListener('touchstart', kick, { once: true, passive: true });
-    document.addEventListener('click', kick, { once: true });
+    vidA.playbackRate = speed;
+    vidA.load();
+    play(vidA);
+    vidA.addEventListener('loadedmetadata', function () { play(vidA); }, { once: true });
+    vidA.addEventListener('canplay', function () { play(vidA); }, { once: true });
+
+    function kick() { if (active.paused) play(active); }
+    ['touchstart', 'pointerdown', 'click', 'scroll', 'keydown'].forEach(function (ev) {
+      document.addEventListener(ev, kick, { passive: true });
+    });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) kick(); });
+    setTimeout(kick, 1200);
+    setTimeout(kick, 4000);
   })();
 
   /* ---------- projekti: filteri, grid, album ---------- */
